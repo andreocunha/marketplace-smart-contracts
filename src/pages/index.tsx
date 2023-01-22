@@ -34,7 +34,7 @@ export default function Home() {
             margin="1rem"
             onClick={() => router.push('/product/[id]', `/product/${i}`)}
           >
-            <Image src="https://via.placeholder.com/150" alt="Produto" />
+            <Image src="https://via.placeholder.com/200" alt="Produto" />
             <Text fontWeight="medium" marginTop="0.5rem">
               Título do Produto
             </Text>

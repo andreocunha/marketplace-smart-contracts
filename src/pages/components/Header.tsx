@@ -50,8 +50,8 @@ export function Header(){
           <Button
             type="submit"
             onClick={handleSearch}
-            // variantColor="teal"
             marginLeft="1rem"
+            backgroundColor="teal.800"
           >
             Procurar
           </Button>
