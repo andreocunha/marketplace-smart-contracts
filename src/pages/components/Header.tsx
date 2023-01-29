@@ -5,13 +5,20 @@ import {
   Button,
   IconButton,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
-import { ChatIcon } from '@chakra-ui/icons'
+import { ChatIcon, PlusSquareIcon } from '@chakra-ui/icons'
+import { loginMetaMask } from '../services/metamask'
+import { MetaMaskContext } from '@/context/MetaMaskContext'
 
 export function Header(){
   const [search, setSearch] = useState('')
   const router = useRouter()
+  
+  const { 
+    setConnectedAddress,
+    setContractInstance
+  } = useContext(MetaMaskContext);
 
   const handleSearch = (e: any) => {
     e.preventDefault()
@@ -60,7 +67,7 @@ export function Header(){
         <Flex align="center">
           <IconButton
             aria-label="Carrinho de compras"
-            icon={<ChatIcon />}
+            icon={<PlusSquareIcon />}
             color="white"
             variant="outline"
             onClick={() => router.push('/cart')}
@@ -68,7 +75,7 @@ export function Header(){
           />
           <Button
             variant="outline"
-            onClick={() => router.push('/login')}
+            onClick={() => loginMetaMask(setConnectedAddress, setContractInstance)}
           >
             Entrar
           </Button>
