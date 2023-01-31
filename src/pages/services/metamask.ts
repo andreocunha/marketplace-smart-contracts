@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
 import { Turing_Dapp_Contract_Address, Turing_Dapp_Contract_ABI } from "../config/keys";
+import { Product_Contract_Factory_ABI, Product_Contract_Factory_Address } from "../config/productFactoryKeys";
+import { Product_Contract_ABI, Product_Contract_Address } from "../config/productKeys";
 
 export async function loginMetaMask() {
   if (window?.ethereum) {
@@ -42,8 +44,18 @@ export async function getMetaMaskContract(account: string) {
   const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
   const signer = provider.getSigner(account);
   return new ethers.Contract(
-    Turing_Dapp_Contract_Address,
-    Turing_Dapp_Contract_ABI,
+    Product_Contract_Factory_Address,
+    Product_Contract_Factory_ABI,
+    signer
+  );
+}
+
+export async function getMetaMaskProductContract(account: string) {
+  const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
+  const signer = provider.getSigner(account);
+  return new ethers.Contract(
+    Product_Contract_Address,
+    Product_Contract_ABI,
     signer
   );
 }

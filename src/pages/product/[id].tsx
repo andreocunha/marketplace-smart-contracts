@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Heading, Image, Text, Button, Container, Flex } from '@chakra-ui/react';
-import { getMetaMaskInfo } from '../services/metamask';
-
+import { getMetaMaskInfo, getMetaMaskProductContract } from '../services/metamask';
+import { BigNumber, Contract, providers, Wallet } from 'ethers'
+import { Product_Contract_Factory_ABI, Product_Contract_Factory_Address } from '../config/productFactoryKeys'
+import { Product_Contract_ABI } from '../config/productKeys';
 
 export default function Product({ id }: any) {
   const [contractInstance, setContractInstance] = useState<any>(null);
@@ -9,12 +11,31 @@ export default function Product({ id }: any) {
   const [product, setProduct] = useState<any>(null);
 
   async function sellProduct() {
-    console.log(contractInstance)
-    // function sellProduct(address _productAddress, address _buyer)
-    const result = await contractInstance.sellProduct(id, buyerAddress);
-    console.log(result);
+    // console.log(contractInstance)
 
-    
+    const provider = new providers.Web3Provider(window?.ethereum, "goerli");
+    const signer = provider.getSigner(buyerAddress);
+    console.log(signer);
+
+    const product = new Contract(id, Product_Contract_ABI, signer);
+    console.log(product);
+    const tx = await product.functions.buyProduct(buyerAddress, {value: String(1)});
+    await tx.wait();
+
+    // const value = (1000);
+
+    // const amount = BigNumber.from(value);
+    // console.log(amount);
+
+    // const gasLimit = 200000;
+    // const result = await contractInstance.buy(id, {
+    //   gasLimit
+    // });
+
+
+    // const contract = await getMetaMaskProductContract(buyerAddress);
+    // console.log(contract);
+
   }
     
 
@@ -29,7 +50,7 @@ export default function Product({ id }: any) {
         setProduct({
           name: product[0],
           description: product[1],
-          price: product[2],
+          price: BigNumber.from(product[2]).toString(),
           image: product[3],
           seller_address: product[4],
           buyer_address: product[5],

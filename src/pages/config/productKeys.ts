@@ -1,31 +1,5 @@
-export const Turing_Dapp_Contract_Address = "0x60f198cBeEFE4F618AC38fD3cE8E68884C7f6D18";
-export const Turing_Dapp_Contract_ABI = [
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "productAddress",
-				"type": "address"
-			}
-		],
-		"name": "ProductCreated",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_productAddress",
-				"type": "address"
-			}
-		],
-		"name": "buy",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
+export const Product_Contract_Address = "0xDaAF1D2ca0B1BcDBa4875D27377573cB61ceA901"
+export const Product_Contract_ABI = [
 	{
 		"inputs": [
 			{
@@ -40,7 +14,7 @@ export const Turing_Dapp_Contract_ABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "_price",
 				"type": "uint256"
 			},
 			{
@@ -54,20 +28,25 @@ export const Turing_Dapp_Contract_ABI = [
 				"type": "address"
 			}
 		],
-		"name": "createProductContract",
-		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
+		"type": "constructor"
 	},
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
 			}
 		],
-		"name": "createdContracts",
+		"name": "buyProduct",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "buyer",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -80,57 +59,73 @@ export const Turing_Dapp_Contract_ABI = [
 	},
 	{
 		"inputs": [],
-		"name": "getAllProducts",
+		"name": "description",
 		"outputs": [
 			{
-				"internalType": "contract Product[]",
+				"internalType": "string",
 				"name": "",
-				"type": "address[]"
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_productAddress",
-				"type": "address"
-			}
-		],
-		"name": "getProduct",
+		"inputs": [],
+		"name": "imageUrl",
 		"outputs": [
 			{
 				"internalType": "string",
 				"name": "",
 				"type": "string"
-			},
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
 			{
 				"internalType": "string",
 				"name": "",
 				"type": "string"
-			},
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "price",
+		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			},
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "seller",
+		"outputs": [
 			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "",
 				"type": "address"
-			},
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "sold",
+		"outputs": [
 			{
 				"internalType": "bool",
 				"name": "",

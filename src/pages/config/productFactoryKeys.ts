@@ -1,31 +1,5 @@
-export const Turing_Dapp_Contract_Address = "0x60f198cBeEFE4F618AC38fD3cE8E68884C7f6D18";
-export const Turing_Dapp_Contract_ABI = [
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "productAddress",
-				"type": "address"
-			}
-		],
-		"name": "ProductCreated",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_productAddress",
-				"type": "address"
-			}
-		],
-		"name": "buy",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
+export const Product_Contract_Factory_Address = "0x39bC9F4F2Ca58CbDBf1BEfCa5A44133bF8b1f510"
+export const Product_Contract_Factory_ABI = [
 	{
 		"inputs": [
 			{
@@ -40,7 +14,7 @@ export const Turing_Dapp_Contract_ABI = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "_price",
 				"type": "uint256"
 			},
 			{
@@ -54,41 +28,9 @@ export const Turing_Dapp_Contract_ABI = [
 				"type": "address"
 			}
 		],
-		"name": "createProductContract",
+		"name": "createProduct",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "createdContracts",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getAllProducts",
-		"outputs": [
-			{
-				"internalType": "contract Product[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -135,6 +77,38 @@ export const Turing_Dapp_Contract_ABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getProductAddresses",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "products",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",

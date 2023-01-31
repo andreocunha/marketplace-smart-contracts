@@ -11,6 +11,7 @@ import { Header } from './components/Header'
 import { MetaMaskContext } from '@/context/MetaMaskContext';
 import { useContext, useEffect, useState } from 'react';
 import { getMetaMaskInfo, isMetaMaskConnected } from './services/metamask';
+import { BigNumber } from 'ethers';
 
 export default function Home() {
   const router = useRouter()
@@ -35,20 +36,11 @@ export default function Home() {
     verifyMetaMask();
   }, [])
 
-  async function saveUniqueProducts(products: any) {
-    const uniqueProducts: any = [];
-    products.forEach((product: any) => {
-      if (!uniqueProducts.includes(product)) {
-        uniqueProducts.push(product);
-      }
-    })
-    return uniqueProducts;
-  }
-
   useEffect(() => {
     if (contractInstance) {
       console.log(contractInstance);
-      contractInstance.getAllProducts().then((allProducts: any) => {
+      contractInstance.getProductAddresses().then((allProducts: any) => {
+        console.log(allProducts);
         allProducts.forEach((productAddress: any) => {
           contractInstance.getProduct(productAddress).then((product: any) => {
             console.log(product);
@@ -58,7 +50,7 @@ export default function Home() {
                 return [...prev, {
                   name: product[0],
                   description: product[1],
-                  price: product[2],
+                  price: BigNumber.from(product[2]).toString(),
                   image: product[3],
                   seller_address: product[4],
                   buyer_address: product[5],

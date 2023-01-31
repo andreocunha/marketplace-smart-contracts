@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { createClient } from '@supabase/supabase-js';
 import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from './services/metamask';
+import { BigNumber } from 'ethers';
 
 // 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
 
@@ -86,20 +87,20 @@ export default function NewProduct() {
     
     setIsLoading(true)
     // fazendo a chamada para o smart contract para criar o produto
-    const result = await contractInstance?.createProductContract(
+    const result = await contractInstance?.createProduct(
       formData.get('name') as string,
       formData.get('description') as string,
-      formData.get('price') as string,
+      BigNumber.from(formData.get('price') as string),
       formData.get('image') as string,
       sellerAddress
     )
     console.log(result)
     
-    contractInstance.on('ProductCreated', (result: any) => {
-      console.log(result)
-      setIsLoading(false)
-      router.push('/')
-    })
+    // contractInstance.on('ProductCreated', (result: any) => {
+    //   console.log(result)
+    //   setIsLoading(false)
+    //   router.push('/')
+    // })
     
   }
 
