@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -15,6 +15,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { createClient } from '@supabase/supabase-js';
+import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from './services/metamask';
 
 // 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
 
@@ -30,7 +31,26 @@ export default function NewProduct() {
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const token = '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'
+  const [contractInstance, setContractInstance] = useState<any>(null);
+  const [sellerAddress, setSellerAddress] = useState<any>(null);
+  const router = useRouter()
+
+  useEffect(() => {
+    // verificando se o usuário está logado se não volta para a pagina principal
+    async function verifyMetaMask() {
+      const status = await isMetaMaskConnected();
+      if (!status) {
+        router.push('/')
+      }
+      else {
+        const result = await getMetaMaskInfo();
+        console.log(result.contract);
+        setContractInstance(result.contract);
+        setSellerAddress(result.account);
+      }
+    }
+    verifyMetaMask();
+  },[])
 
   async function uploadImage(){
     if(!image) return
@@ -63,6 +83,23 @@ export default function NewProduct() {
     formData.append('price', e.target[2].value)
     const url = await uploadImage() || 'https://via.placeholder.com/200'
     formData.append('image', url)
+    
+    setIsLoading(true)
+    // fazendo a chamada para o smart contract para criar o produto
+    const result = await contractInstance?.createProductContract(
+      formData.get('name') as string,
+      formData.get('description') as string,
+      formData.get('price') as string,
+      formData.get('image') as string,
+      sellerAddress
+    )
+    console.log(result)
+    
+    contractInstance.on('ProductCreated', (result: any) => {
+      console.log(result)
+      setIsLoading(false)
+      router.push('/')
+    })
     
   }
 

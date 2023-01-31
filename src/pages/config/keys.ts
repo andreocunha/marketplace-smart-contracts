@@ -1,5 +1,18 @@
-export const Turing_Dapp_Contract_Address = "0x053d8955043D63EEB96f110DF79446116F4Fa91E";
+export const Turing_Dapp_Contract_Address = "0x39dFBFd7FAC4a29Cc063AdEa7b0dF6c3162C21DE";
 export const Turing_Dapp_Contract_ABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "productAddress",
+				"type": "address"
+			}
+		],
+		"name": "ProductCreated",
+		"type": "event"
+	},
 	{
 		"inputs": [
 			{
@@ -112,6 +125,24 @@ export const Turing_Dapp_Contract_ABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_productAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
+			}
+		],
+		"name": "sellProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

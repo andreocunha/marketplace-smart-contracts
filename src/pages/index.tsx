@@ -35,32 +35,47 @@ export default function Home() {
     verifyMetaMask();
   }, [])
 
+  async function saveUniqueProducts(products: any) {
+    const uniqueProducts: any = [];
+    products.forEach((product: any) => {
+      if (!uniqueProducts.includes(product)) {
+        uniqueProducts.push(product);
+      }
+    })
+    return uniqueProducts;
+  }
+
   useEffect(() => {
     if (contractInstance) {
       console.log(contractInstance);
       contractInstance.getAllProducts().then((allProducts: any) => {
-        // console.log(products);
         allProducts.forEach((productAddress: any) => {
           contractInstance.getProduct(productAddress).then((product: any) => {
-            // console.log(product);
-            // verify if product is not in the array
-            if (!products.find((p: any) => p.id === product.id)) {
-              setProducts([...products, {
-                name: product[0],
-                description: product[1],
-                price: product[2],
-                image: product[3],
-                seller_address: product[4],
-                buyer_address: product[5],
-                status: product[6],
-                address: productAddress
-              }]);
-            }
+            console.log(product);
+            setProducts((prev: any) => {
+              let exists = prev.find((p: { address: any; }) => p.address === productAddress);
+              if (!exists) {
+                return [...prev, {
+                  name: product[0],
+                  description: product[1],
+                  price: product[2],
+                  image: product[3],
+                  seller_address: product[4],
+                  buyer_address: product[5],
+                  status: product[6],
+                  address: productAddress
+                }]
+              }
+              return prev;
+            })
           })
         })
+      }).catch((error: any) => {
+        console.log(error?.message);
       })
     }
   }, [contractInstance])
+  
 
   return (
     <Container maxW="full" margin={0} padding={0}>
@@ -71,9 +86,13 @@ export default function Home() {
         wrap="wrap"
         marginTop="3rem"
       >
-        {console.log(products)}
+
+        {products.length === 0 && (
+          <Text>Nenhum produto encontrado</Text>
+        )}
+
         {/* Produtos */}
-        {products.map((product: any, i: number) => (
+        {products?.map((product: any, i: number) => (
           <Card
             key={i}
             p="1rem"
@@ -83,6 +102,7 @@ export default function Home() {
             maxW="sm"
             overflow="hidden"
             margin="1rem"
+            cursor="pointer"
             onClick={() => router.push('/product/[id]', `/product/${product.address}`)}
           >
             <Image src={product.image} alt={product.name} />

@@ -1,37 +1,39 @@
 import { ethers } from "ethers";
 import { Turing_Dapp_Contract_Address, Turing_Dapp_Contract_ABI } from "../config/keys";
 
-export async function loginMetaMask(setConnectedAddress: any, setContractInstance: any) {
-  /* 1. Enable ethereum connection */
-  /* 3. Prompt user to sign in to MetaMask */
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
-  provider.send("eth_requestAccounts", []).then(() => {
-    provider.listAccounts().then((accounts) => {
-      const signer = provider.getSigner(accounts[0]);
-      console.log(signer._address)
-      setConnectedAddress(signer._address)
-
-      /* 3.1 Criação da instância do contrato inteligente */
-      const newTuringDappContract = new ethers.Contract(
-        Turing_Dapp_Contract_Address, 
-        Turing_Dapp_Contract_ABI, 
-        signer
-      )
-      setContractInstance(newTuringDappContract)
-      // console.log(newTuringDappContract)
-      // console.log(newTuringDappContract.signer)
+export async function loginMetaMask() {
+  if (window?.ethereum) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
+    provider.send("eth_requestAccounts", []).then(() => {
+      provider.listAccounts().then((accounts) => {
+        const signer = provider.getSigner(accounts[0]);
+        console.log(signer._address);
+        
+        window.location.reload();
+      });
     });
-  });
+  }
 }
 
 export async function isMetaMaskConnected() {
-  return (window as any).ethereum.isConnected();
+  if (window?.ethereum) {
+    const accounts = await window.ethereum.request({
+      method: "eth_accounts",
+    });
+    if (accounts.length > 0) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export async function getMetaMaskAccount() {
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
+  const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
   // return the first account, if has
   return provider.listAccounts().then((accounts) => {
+    if (accounts.length === 0) {
+      loginMetaMask();
+    }
     return accounts[0];
   });
 }
@@ -50,4 +52,16 @@ export async function getMetaMaskInfo() {
   const account = await getMetaMaskAccount();
   const contract = await getMetaMaskContract(account);
   return { account, contract };
+}
+
+export async function listenToEvent(contractInstance: { once: (arg0: any, arg1: { filter: any; }, arg2: (error: any, event: any) => void) => void; }, eventName: any, filterOptions: any) {
+  return new Promise((resolve, reject) => {
+    contractInstance.once(eventName, { filter: filterOptions }, (error, event) => {
+      if (!error) {
+        resolve(event)
+      } else {
+        reject(error)
+      }
+    })
+  })
 }
