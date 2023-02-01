@@ -39,7 +39,7 @@ export default function Product({ id }: any) {
       .catch((error: any) => {
         console.log('ERROOO: ', error);
         emitAlert({
-          title: error?.error?.message,
+          title: 'Compra não realizada!',
           icon: 'error',
         })
         setIsLoading(false);

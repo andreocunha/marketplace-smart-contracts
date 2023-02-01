@@ -1,4 +1,4 @@
-export const Product_Contract_Factory_Address = "0xEf241AF2dBb2a0178AC25B9e4bd2F991B356c80D"
+export const Product_Contract_Factory_Address = "0x7E87EE54Aa82F3a336553c3178F5B9Ab8E2eFDaF"
 export const Product_Contract_Factory_ABI = [
 	{
 		"anonymous": false,
@@ -42,6 +42,19 @@ export const Product_Contract_Factory_ABI = [
 			}
 		],
 		"name": "createProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_productAddress",
+				"type": "address"
+			}
+		],
+		"name": "deleteProduct",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

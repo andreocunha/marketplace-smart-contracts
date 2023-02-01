@@ -1,4 +1,4 @@
-export const Product_Contract_Address = "0x57E71a856832b75dF7b4fCf63F80c89A4E8d6188"
+export const Product_Contract_Address = "0x13D8C4F099edA8b446DB4f6f038a70818db00d6b"
 export const Product_Contract_ABI = [
 	{
 		"inputs": [

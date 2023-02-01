@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { Turing_Dapp_Contract_Address, Turing_Dapp_Contract_ABI } from "../config/keys";
 import { Product_Contract_Factory_ABI, Product_Contract_Factory_Address } from "../config/productFactoryKeys";
 import { Product_Contract_ABI, Product_Contract_Address } from "../config/productKeys";
 
