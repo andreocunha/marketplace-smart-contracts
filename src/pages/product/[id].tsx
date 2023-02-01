@@ -37,7 +37,7 @@ export default function Product({ id }: any) {
         })
       })
       .catch((error: any) => {
-        console.log('ERROOO: ', error?.error?.message);
+        console.log('ERROOO: ', error);
         emitAlert({
           title: error?.error?.message,
           icon: 'error',
@@ -83,7 +83,7 @@ export default function Product({ id }: any) {
       <Flex align="center" justify="center" maxW="container.full" height="100vh">
         <Flex p={8} direction="column" backgroundColor="white" borderRadius="md" boxShadow="md" align="center" justify="center">
           <Heading>{product.name}</Heading>
-          <Image src={product.image} alt={product.name} />
+          <Image src={product.image} alt={product.name} width="350px" />
           <Text>Descrição: {product.description}</Text>
           <Text>Preço: {product.price}</Text>
           <Text>Vendedor: {product.seller_address}</Text>

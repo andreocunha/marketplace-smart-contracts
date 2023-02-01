@@ -16,12 +16,13 @@ import { BigNumber } from 'ethers';
 export default function Home() {
   const router = useRouter()
   const [products, setProducts] = useState<any>([]);
+  const [contractInstance, setContractInstance] = useState<any>(null);
 
-  const { 
-    contractInstance,
-    setConnectedAddress,
-    setContractInstance
-  } = useContext(MetaMaskContext);
+  // const { 
+  //   contractInstance,
+  //   setConnectedAddress,
+  //   setContractInstance
+  // } = useContext(MetaMaskContext);
 
   useEffect(() => {
     async function verifyMetaMask() {
@@ -29,7 +30,6 @@ export default function Home() {
       if (status) {
         const result = await getMetaMaskInfo();
         console.log(result);
-        setConnectedAddress(result.account);
         setContractInstance(result.contract);
       }
     }
@@ -96,8 +96,10 @@ export default function Home() {
             margin="1rem"
             cursor="pointer"
             onClick={() => router.push('/product/[id]', `/product/${product.address}`)}
+            width="400px"
+            height="400px"
           >
-            <Image src={product.image} alt={product.name} />
+            <Image src={product.image} alt={product.name} width="350px" height="250px" />
             <Text fontWeight="medium" marginTop="0.5rem">
               {product.name}
             </Text>
