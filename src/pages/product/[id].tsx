@@ -1,41 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Heading, Image, Text, Button, Container, Flex } from '@chakra-ui/react';
-import { getMetaMaskInfo, getMetaMaskProductContract } from '../services/metamask';
-import { BigNumber, Contract, providers, Wallet } from 'ethers'
-import { Product_Contract_Factory_ABI, Product_Contract_Factory_Address } from '../config/productFactoryKeys'
+import { getMetaMaskInfo } from '../services/metamask';
+import { BigNumber, Contract, providers } from 'ethers'
 import { Product_Contract_ABI } from '../config/productKeys';
+import { emitAlert } from '@/utils/alerts';
 
 export default function Product({ id }: any) {
   const [contractInstance, setContractInstance] = useState<any>(null);
   const [buyerAddress, setBuyerAddress] = useState<any>(null);
   const [product, setProduct] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function sellProduct() {
-    // console.log(contractInstance)
+    setIsLoading(true);
 
     const provider = new providers.Web3Provider(window?.ethereum, "goerli");
     const signer = provider.getSigner(buyerAddress);
     console.log(signer);
 
-    const product = new Contract(id, Product_Contract_ABI, signer);
-    console.log(product);
-    const tx = await product.functions.buyProduct(buyerAddress, {value: String(1)});
-    await tx.wait();
-
-    // const value = (1000);
-
-    // const amount = BigNumber.from(value);
-    // console.log(amount);
-
-    // const gasLimit = 200000;
-    // const result = await contractInstance.buy(id, {
-    //   gasLimit
-    // });
-
-
-    // const contract = await getMetaMaskProductContract(buyerAddress);
-    // console.log(contract);
-
+    const productInstance = new Contract(id, Product_Contract_ABI, signer);
+    console.log(productInstance);
+    await productInstance.functions.buyProduct(buyerAddress, {value: String(product.price)})
+     .then((result: any) => {
+        console.log(result);
+        emitAlert({
+          title: 'Aguarde a confirmação da transação...',
+          icon: 'info',
+        })
+        productInstance.on('ProductCreated', (result: any) => {
+          console.log('Comprado! ',result)
+          emitAlert({
+            title: 'Produto comprado com sucesso!',
+            icon: 'success',
+          })
+          setIsLoading(false);
+        })
+      })
+      .catch((error: any) => {
+        console.log('ERROOO: ', error?.error?.message);
+        emitAlert({
+          title: error?.error?.message,
+          icon: 'error',
+        })
+        setIsLoading(false);
+      })
   }
     
 
@@ -79,7 +87,7 @@ export default function Product({ id }: any) {
           <Text>Descrição: {product.description}</Text>
           <Text>Preço: {product.price}</Text>
           <Text>Vendedor: {product.seller_address}</Text>
-          <Button color="green" m={4} onClick={sellProduct}>
+          <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading}>
             Comprar
           </Button>
         </Flex>

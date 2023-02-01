@@ -17,10 +17,7 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from './services/metamask';
 import { BigNumber } from 'ethers';
-
-// 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
-
-// 8jf45SKsR60f0r79 (senha supabase)
+import { emitAlert } from '@/utils/alerts';
 
 const supabase = createClient(
   'https://bqcbdsdhihlzxgaswdgy.supabase.co',
@@ -87,21 +84,31 @@ export default function NewProduct() {
     
     setIsLoading(true)
     // fazendo a chamada para o smart contract para criar o produto
-    const result = await contractInstance?.createProduct(
+    await contractInstance?.createProduct(
       formData.get('name') as string,
       formData.get('description') as string,
       BigNumber.from(formData.get('price') as string),
       formData.get('image') as string,
       sellerAddress
-    )
-    console.log(result)
-    
-    // contractInstance.on('ProductCreated', (result: any) => {
-    //   console.log(result)
-    //   setIsLoading(false)
-    //   router.push('/')
-    // })
-    
+    ).then((result: any) => {
+      console.log(result)
+      contractInstance.on('ProductCreated', (result: any) => {
+        emitAlert({
+          title: 'Produto criado com sucesso',
+          icon: 'success',
+        })
+        console.log(result)
+        setIsLoading(false)
+        router.push('/')
+      })
+    }).catch((error: any) => {
+      console.log(error)
+      setIsLoading(false)
+      emitAlert({
+        title: 'Erro ao criar o produto',
+        icon: 'error',
+      })
+    })
   }
 
   return (

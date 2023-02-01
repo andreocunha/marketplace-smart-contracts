@@ -1,5 +1,18 @@
-export const Product_Contract_Factory_Address = "0x39bC9F4F2Ca58CbDBf1BEfCa5A44133bF8b1f510"
+export const Product_Contract_Factory_Address = "0xEf241AF2dBb2a0178AC25B9e4bd2F991B356c80D"
 export const Product_Contract_Factory_ABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "productAddress",
+				"type": "address"
+			}
+		],
+		"name": "ProductCreated",
+		"type": "event"
+	},
 	{
 		"inputs": [
 			{
