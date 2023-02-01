@@ -7,10 +7,10 @@ import {
   Image,
   Text
 } from '@chakra-ui/react'
-import { Header } from './components/Header'
+import { Header } from '../components/Header'
 import { MetaMaskContext } from '@/context/MetaMaskContext';
 import { useContext, useEffect, useState } from 'react';
-import { getMetaMaskInfo, isMetaMaskConnected } from './services/metamask';
+import { getMetaMaskInfo, isMetaMaskConnected } from '../services/metamask';
 import { BigNumber } from 'ethers';
 
 export default function Home() {

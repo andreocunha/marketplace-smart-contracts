@@ -15,7 +15,7 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { createClient } from '@supabase/supabase-js';
-import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from './services/metamask';
+import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from '../services/metamask';
 import { BigNumber } from 'ethers';
 import { emitAlert } from '@/utils/alerts';
 

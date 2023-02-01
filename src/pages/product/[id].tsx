@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Heading, Image, Text, Button, Container, Flex } from '@chakra-ui/react';
-import { getMetaMaskInfo } from '../services/metamask';
+import { getMetaMaskInfo } from '../../services/metamask';
 import { BigNumber, Contract, providers } from 'ethers'
-import { Product_Contract_ABI } from '../config/productKeys';
+import { Product_Contract_ABI } from '../../config/productKeys';
 import { emitAlert } from '@/utils/alerts';
 
 export default function Product({ id }: any) {
