@@ -27,7 +27,7 @@ export default function Product({ id }: any) {
           title: 'Aguarde a confirmação da transação...',
           icon: 'info',
         })
-        productInstance.on('ProductCreated', (result: any) => {
+        productInstance.on('Paid', (result: any) => {
           console.log('Comprado! ',result)
           emitAlert({
             title: 'Produto comprado com sucesso!',
