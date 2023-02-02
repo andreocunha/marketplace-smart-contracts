@@ -8,8 +8,6 @@ export async function loginMetaMask() {
     provider.send("eth_requestAccounts", []).then(() => {
       provider.listAccounts().then((accounts) => {
         const signer = provider.getSigner(accounts[0]);
-        console.log(signer._address);
-        
         window.location.reload();
       });
     });
@@ -63,7 +61,6 @@ export async function getContractProductFactoryInstance() {
 
 export async function getProductInfoByAddress(contractAddress: string) {
   const contract = await getContractProductFactoryInstance();
-  console.log('CONTRATO: ',contract);
   const product = await contract.getProduct(contractAddress);
   return {
     name: product[0],
@@ -72,7 +69,7 @@ export async function getProductInfoByAddress(contractAddress: string) {
     imageUrl: product[3],
     seller_address: product[4],
     buyer_address: product[5],
-    status: product[6],
+    isSold: product[6],
     address: contractAddress,
   }
 }

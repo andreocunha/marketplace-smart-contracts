@@ -1,12 +1,24 @@
+import { loginMetaMask, isMetaMaskConnected } from '@/services/metamask';
 import {
   Container,
   Button,
   Flex
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
+
+  useEffect(() => {
+    async function checkMetaMask() {
+      const isConnected = await isMetaMaskConnected();
+      if (!isConnected) {
+        await loginMetaMask();
+      }
+    }
+    checkMetaMask();
+  }, [])
 
   return (
     <Container display="flex" alignItems="center" justifyContent="center"  maxW="full" height="100vh" margin={0} padding={0} style={{

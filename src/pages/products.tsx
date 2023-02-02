@@ -20,7 +20,6 @@ export default function Products() {
       const status = await isMetaMaskConnected();
       if (status) {
         const result = await getContractProductFactoryInstance();
-        console.log(result);
         setContractInstance(result);
       }
       else {

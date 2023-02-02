@@ -17,13 +17,11 @@ export default function Product({ id }: any) {
     const productInstance = await getContractProductInstance(id)
     await productInstance.functions.buyProduct(buyerAddress, {value: String(product.price)})
      .then((result: any) => {
-        console.log(result);
         emitAlert({
           title: 'Aguarde a confirmação da transação...',
           icon: 'info',
         })
         productInstance.on('Paid', (result: any) => {
-          console.log('Comprado! ',result)
           emitAlert({
             title: 'Produto comprado com sucesso!',
             icon: 'success',
@@ -33,7 +31,7 @@ export default function Product({ id }: any) {
         })
       })
       .catch((error: any) => {
-        console.log('ERROOO: ', error);
+        console.log('ERRO: ', error);
         emitAlert({
           title: 'Compra não realizada!',
           icon: 'error',
@@ -47,7 +45,6 @@ export default function Product({ id }: any) {
     const productFactory = await getContractProductFactoryInstance();
     await productFactory.functions.deleteProduct(id)
       .then((result: any) => {
-        console.log(result);
         emitAlert({
           title: 'Aguarde a confirmação da exclusão...',
           icon: 'info',
@@ -99,18 +96,20 @@ export default function Product({ id }: any) {
           <Heading>{product.name}</Heading>
           <Image src={product.imageUrl} alt={product.name} width="350px" />
           <Text>Descrição: {product.description}</Text>
-          <Text fontWeight="bold">Preço: {product.price} Goerli</Text>
+          <Text fontWeight="bold">
+            Preço: {product.price} Wei = {Number(product.price) / 10**18} GöETH
+          </Text>
           <Text>Vendedor: {product.seller_address}</Text>
-          {product.status && <Text>Comprador: {product.buyer_address}</Text>}
+          {product.isSold && <Text>Comprador: {product.buyer_address}</Text>}
           <Flex direction="row">
-            {product.status ? 
+            {product.isSold ? 
               <Text color="red.500" fontWeight="bold">Produto vendido!</Text> : 
               <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading} disabled={isDeleting}>
                 Comprar
               </Button>
             }
             {/* // if (buyerAddress === product.seller_address) allow delete product */}
-            { (buyerAddress === product.seller_address && !product.status) && !product.status && (
+            { (buyerAddress === product.seller_address && !product.isSold) && !product.isSold && (
               <Button color="red" m={4} onClick={() => deleteProduct()} isLoading={isDeleting} disabled={isLoading}>
                 Deletar
               </Button>

@@ -43,7 +43,6 @@ export default function NewProduct() {
       else {
         const contract = await getContractProductFactoryInstance();
         const address = await contract.signer.getAddress();
-        console.log(contract);
         setContractInstance(contract);
         setSellerAddress(address);
       }
@@ -68,7 +67,6 @@ export default function NewProduct() {
     }
     if(data) {
       const url = `https://bqcbdsdhihlzxgaswdgy.supabase.co/storage/v1/object/public/images/${data?.path}`
-      console.log(url)
       return url
     }
     return 'https://via.placeholder.com/200'

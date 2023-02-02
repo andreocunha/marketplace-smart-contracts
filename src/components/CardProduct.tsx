@@ -25,6 +25,8 @@ export function CardProduct({ product }: { product: ProductProps }) {
       _hover={{
         transform: "translateY(-5px)",
       }}
+      // cor opaca filter="brightness(0.8)"
+      filter={product.isSold ? "brightness(0.5)" : "none"}
     >
       <Image 
         src={product.imageUrl} 
@@ -40,10 +42,10 @@ export function CardProduct({ product }: { product: ProductProps }) {
         {product.description}
       </Text>
       <Text fontWeight="medium" color="teal.500" marginTop="0.5rem">
-        {product.price} Goerli
+        {product.price} Wei = {Number(product.price) / 10**18} GöETH
       </Text>
       {
-        product.status ?
+        product.isSold ?
           <Text color="red.500" fontWeight="bold" marginTop="0.5rem">
             Produto vendido!
           </Text> :

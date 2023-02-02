@@ -5,7 +5,7 @@ interface ProductProps {
   imageUrl: string;
   seller_address: string;
   buyer_address: string;
-  status: string;
+  isSold: string;
   address: string;
 }
 
