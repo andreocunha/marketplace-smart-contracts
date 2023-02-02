@@ -105,13 +105,13 @@ export default function Product({ id }: any) {
           <Flex direction="row">
             {product.status ? 
               <Text color="red.500" fontWeight="bold">Produto vendido!</Text> : 
-              <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading}>
+              <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading} disabled={isDeleting}>
                 Comprar
               </Button>
             }
             {/* // if (buyerAddress === product.seller_address) allow delete product */}
             { (buyerAddress === product.seller_address && !product.status) && !product.status && (
-              <Button color="red" m={4} onClick={() => deleteProduct()} isLoading={isDeleting}>
+              <Button color="red" m={4} onClick={() => deleteProduct()} isLoading={isDeleting} disabled={isLoading}>
                 Deletar
               </Button>
             )}
