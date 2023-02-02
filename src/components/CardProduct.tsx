@@ -10,6 +10,9 @@ import { ProductProps } from '../interfaces/product'
 export function CardProduct({ product }: { product: ProductProps }) {
   return (
     <Card
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
       p="1rem"
       borderWidth="1px"
       rounded="lg"
@@ -38,7 +41,8 @@ export function CardProduct({ product }: { product: ProductProps }) {
       <Text fontWeight="medium" marginTop="0.5rem">
         {product.name}
       </Text>
-      <Text color="gray.600" marginTop="0.5rem">
+      {/* max 2 lines */}
+      <Text color="gray.600" marginTop="0.5rem" noOfLines={2}>
         {product.description}
       </Text>
       <Text fontWeight="medium" color="teal.500" marginTop="0.5rem">
