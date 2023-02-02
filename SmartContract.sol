@@ -48,8 +48,9 @@ contract ProductFactory {
     // Array para armazenar endereços de contratos de produto criados
     address[] public products;
 
-    // Evento que é emitido ao criar um novo contrato de produto
+    // Evento emitidos
     event ProductCreated(address indexed productAddress);
+    event Deleted();
 
     // Função para criar um novo contrato de produto
     function createProduct(string memory _name, string memory _description, uint256 _price, string memory _imageUrl, address payable _seller) public {
@@ -101,41 +102,62 @@ contract ProductFactory {
         }
 
         products = newProducts;
+        emit Deleted();
     }
 
     function getProductsBySeller(address _seller) public view returns (address[] memory) {
-        // Criar uma lista para armazenar endereços de contratos vendidos pelo usuário
-        address[] memory soldProducts;
         uint256 soldProductCount = 0;
         // Percorra a lista de contratos de produto
         for (uint256 i = 0; i < products.length; i++) {
             // Verificar se o vendedor do contrato corresponde ao usuário dado
             Product product = Product(products[i]);
             if (product.seller() == _seller) {
-                // Adicionar o endereço do contrato à lista de vendas
-                soldProducts[soldProductCount] = products[i];
+                // Aumentar o contador de vendas
                 soldProductCount++;
+            }
+        }
+        // Alocar dinamicamente a lista de contratos vendidos pelo usuário
+        address[] memory soldProducts = new address[](soldProductCount);
+        uint256 j = 0;
+        // Percorra a lista de contratos de produto
+        for (uint256 i = 0; i < products.length; i++) {
+            // Verificar se o vendedor do contrato corresponde ao usuário dado
+            Product product = Product(products[i]);
+            if (product.seller() == _seller) {
+                // Adicionar o endereço do contrato à lista de vendas
+                soldProducts[j] = products[i];
+                j++;
             }
         }
         // Retorna a lista de contratos vendidos pelo usuário
         return soldProducts;
     }
 
-    function getProductsByBuyerOrSeller(address _user) public view returns (address[] memory) {
-        // Criar uma lista para armazenar endereços de contratos vendidos ou comprados pelo usuário
-        address[] memory productsByUser;
-        uint256 productCount = 0;
+    function getProductsByBuyer(address _buyer) public view returns (address[] memory) {
+        uint256 boughtProductCount = 0;
         // Percorra a lista de contratos de produto
         for (uint256 i = 0; i < products.length; i++) {
-            // Verificar se o vendedor ou comprador do contrato corresponde ao usuário dado
+            // Verificar se o comprador do contrato corresponde ao usuário dado
             Product product = Product(products[i]);
-            if ((product.seller() == _user || product.buyer() == _user) && product.sold()) {
-                // Adicionar o endereço do contrato à lista de vendas ou compras
-                productsByUser[productCount] = products[i];
-                productCount++;
+            if (product.buyer() == _buyer) {
+                // Aumentar o contador de compras
+                boughtProductCount++;
             }
         }
-        // Retorna a lista de contratos vendidos ou comprados pelo usuário
-        return productsByUser;
+        // Alocar dinamicamente a lista de contratos comprados pelo usuário
+        address[] memory boughtProducts = new address[](boughtProductCount);
+        uint256 j = 0;
+        // Percorra a lista de contratos de produto
+        for (uint256 i = 0; i < products.length; i++) {
+            // Verificar se o comprador do contrato corresponde ao usuário dado
+            Product product = Product(products[i]);
+            if (product.buyer() == _buyer) {
+                // Adicionar o endereço do contrato à lista de compras
+                boughtProducts[j] = products[i];
+                j++;
+            }
+        }
+        // Retorna a lista de contratos comprados pelo usuário
+        return boughtProducts;
     }
 }
