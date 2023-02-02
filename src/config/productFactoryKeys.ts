@@ -1,5 +1,11 @@
-export const Product_Contract_Factory_Address = "0x7E87EE54Aa82F3a336553c3178F5B9Ab8E2eFDaF"
+export const Product_Contract_Factory_Address = "0x8B1292711e0873aCf697CD41394B7C1B43931c17"
 export const Product_Contract_Factory_ABI = [
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "Deleted",
+		"type": "event"
+	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -111,6 +117,44 @@ export const Product_Contract_Factory_ABI = [
 	{
 		"inputs": [],
 		"name": "getProductAddresses",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
+			}
+		],
+		"name": "getProductsByBuyer",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_seller",
+				"type": "address"
+			}
+		],
+		"name": "getProductsBySeller",
 		"outputs": [
 			{
 				"internalType": "address[]",

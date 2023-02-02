@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { Product_Contract_Factory_ABI, Product_Contract_Factory_Address } from "../config/productFactoryKeys";
 import { Product_Contract_ABI, Product_Contract_Address } from "../config/productKeys";
 
@@ -39,8 +39,20 @@ export async function getMetaMaskAccount() {
   });
 }
 
-export async function getMetaMaskContract(account: string) {
+export async function getContractProductInstance(contractAddress: string) {
   const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
+  const account = await getMetaMaskAccount();
+  const signer = provider.getSigner(account);
+  return new ethers.Contract(
+    contractAddress,
+    Product_Contract_ABI,
+    signer
+  );
+}
+
+export async function getContractProductFactoryInstance() {
+  const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
+  const account = await getMetaMaskAccount();
   const signer = provider.getSigner(account);
   return new ethers.Contract(
     Product_Contract_Factory_Address,
@@ -49,30 +61,18 @@ export async function getMetaMaskContract(account: string) {
   );
 }
 
-export async function getMetaMaskProductContract(account: string) {
-  const provider = new ethers.providers.Web3Provider(window?.ethereum, "goerli");
-  const signer = provider.getSigner(account);
-  return new ethers.Contract(
-    Product_Contract_Address,
-    Product_Contract_ABI,
-    signer
-  );
-}
-
-export async function getMetaMaskInfo() {
-  const account = await getMetaMaskAccount();
-  const contract = await getMetaMaskContract(account);
-  return { account, contract };
-}
-
-export async function listenToEvent(contractInstance: { once: (arg0: any, arg1: { filter: any; }, arg2: (error: any, event: any) => void) => void; }, eventName: any, filterOptions: any) {
-  return new Promise((resolve, reject) => {
-    contractInstance.once(eventName, { filter: filterOptions }, (error, event) => {
-      if (!error) {
-        resolve(event)
-      } else {
-        reject(error)
-      }
-    })
-  })
+export async function getProductInfoByAddress(contractAddress: string) {
+  const contract = await getContractProductFactoryInstance();
+  console.log('CONTRATO: ',contract);
+  const product = await contract.getProduct(contractAddress);
+  return {
+    name: product[0],
+    description: product[1],
+    price: BigNumber.from(product[2]).toString(),
+    imageUrl: product[3],
+    seller_address: product[4],
+    buyer_address: product[5],
+    status: product[6],
+    address: contractAddress,
+  }
 }

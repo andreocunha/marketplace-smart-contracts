@@ -21,10 +21,6 @@ contract Product {
         sold = false;
     }
     
-    // Mapeamentos para armazenar os produtos vendidos e comprados por cada usuário
-    mapping(address => address[]) public productsSold;
-    mapping(address => address[]) public productsBought;
-    
     // Evento para indicar o pagamento
     event Paid();
     
@@ -39,24 +35,10 @@ contract Product {
         buyer = _buyer;
         sold = true;
         
-        // Adiciona o produto à lista de produtos vendidos e comprados
-        productsSold[seller].push(address(this));
-        productsBought[buyer].push(address(this));
-        
         // Transfere o pagamento para o vendedor
         payable(seller).transfer(address(this).balance);
         // Emite o evento Paid
         emit Paid();
-    }
-    
-    // Função para obter a lista de produtos vendidos por um usuário
-    function getUserSoldProducts(address _seller) public view returns (address[] memory) {
-        return productsSold[_seller];
-    }
-    
-    // Função para obter a lista de produtos comprados por um usuário
-    function getUserBoughtProducts(address _buyer) public view returns (address[] memory) {
-        return productsBought[_buyer];
     }
 }
 
@@ -121,4 +103,39 @@ contract ProductFactory {
         products = newProducts;
     }
 
+    function getProductsBySeller(address _seller) public view returns (address[] memory) {
+        // Criar uma lista para armazenar endereços de contratos vendidos pelo usuário
+        address[] memory soldProducts;
+        uint256 soldProductCount = 0;
+        // Percorra a lista de contratos de produto
+        for (uint256 i = 0; i < products.length; i++) {
+            // Verificar se o vendedor do contrato corresponde ao usuário dado
+            Product product = Product(products[i]);
+            if (product.seller() == _seller) {
+                // Adicionar o endereço do contrato à lista de vendas
+                soldProducts[soldProductCount] = products[i];
+                soldProductCount++;
+            }
+        }
+        // Retorna a lista de contratos vendidos pelo usuário
+        return soldProducts;
+    }
+
+    function getProductsByBuyerOrSeller(address _user) public view returns (address[] memory) {
+        // Criar uma lista para armazenar endereços de contratos vendidos ou comprados pelo usuário
+        address[] memory productsByUser;
+        uint256 productCount = 0;
+        // Percorra a lista de contratos de produto
+        for (uint256 i = 0; i < products.length; i++) {
+            // Verificar se o vendedor ou comprador do contrato corresponde ao usuário dado
+            Product product = Product(products[i]);
+            if ((product.seller() == _user || product.buyer() == _user) && product.sold()) {
+                // Adicionar o endereço do contrato à lista de vendas ou compras
+                productsByUser[productCount] = products[i];
+                productCount++;
+            }
+        }
+        // Retorna a lista de contratos vendidos ou comprados pelo usuário
+        return productsByUser;
+    }
 }

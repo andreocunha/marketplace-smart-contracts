@@ -7,20 +7,24 @@ import {
 } from '@chakra-ui/react'
 import { Header } from '../components/Header'
 import { useEffect, useState } from 'react';
-import { getMetaMaskInfo, isMetaMaskConnected } from '../services/metamask';
-import { BigNumber } from 'ethers';
+import { getContractProductFactoryInstance, getProductInfoByAddress, isMetaMaskConnected, loginMetaMask } from '../services/metamask';
+import { CardProduct } from '@/components/CardProduct';
 
 export default function Products() {
   const [products, setProducts] = useState<any>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [contractInstance, setContractInstance] = useState<any>(null);
 
   useEffect(() => {
     async function verifyMetaMask() {
       const status = await isMetaMaskConnected();
       if (status) {
-        const result = await getMetaMaskInfo();
+        const result = await getContractProductFactoryInstance();
         console.log(result);
-        setContractInstance(result.contract);
+        setContractInstance(result);
+      }
+      else {
+        loginMetaMask();
       }
     }
     verifyMetaMask();
@@ -28,25 +32,14 @@ export default function Products() {
 
   useEffect(() => {
     if (contractInstance) {
-      console.log(contractInstance);
       contractInstance.getProductAddresses().then((allProducts: any) => {
-        console.log(allProducts);
         allProducts.forEach((productAddress: any) => {
-          contractInstance.getProduct(productAddress).then((product: any) => {
-            console.log(product);
+          contractInstance.getProduct(productAddress).then(async(product: any) => {
+            const newProduct = await getProductInfoByAddress(productAddress);
             setProducts((prev: any) => {
               let exists = prev.find((p: { address: any; }) => p.address === productAddress);
               if (!exists) {
-                return [...prev, {
-                  name: product[0],
-                  description: product[1],
-                  price: BigNumber.from(product[2]).toString(),
-                  image: product[3],
-                  seller_address: product[4],
-                  buyer_address: product[5],
-                  status: product[6],
-                  address: productAddress
-                }]
+                return [...prev, newProduct]
               }
               return prev;
             })
@@ -58,47 +51,31 @@ export default function Products() {
     }
   }, [contractInstance])
   
+  useEffect(() => {
+    setFilteredProducts(products);
+  },[products])
 
   return (
-    <Container maxW="full" margin={0} padding={0}>
-      <Header />
+    <Container color="#fff" maxW="full" height="100%" minHeight="100vh" margin={0} padding={0} backgroundImage="linear-gradient(to bottom, #1D2833, #1F4F59, #1E2D37)"
+    >
+      <Header 
+        setFilteredProducts={setFilteredProducts}
+        products={products}
+        isLogged={contractInstance !== null}
+      />
       <Flex
         align="center"
         justify="center"
         wrap="wrap"
-        marginTop="3rem"
       >
 
         {products.length === 0 && (
-          <Text>Nenhum produto encontrado</Text>
+          <Image src="/images/empty.gif" alt="Nenhum produto encontrado" width="400px" alignSelf="center" position="absolute" top="30vh" />
         )}
 
-        {/* Produtos */}
-        {products?.map((product: any, i: number) => (
+        {filteredProducts?.map((product: any, i: number) => (
           <a href={`/product/${product.address}`} key={i} target="_blank" rel="noreferrer">
-          <Card
-            p="1rem"
-            borderWidth="1px"
-            rounded="lg"
-            boxShadow="md"
-            maxW="sm"
-            overflow="hidden"
-            margin="1rem"
-            cursor="pointer"
-            width="400px"
-            height="400px"
-          >
-            <Image src={product.image} alt={product.name} width="350px" height="250px" />
-            <Text fontWeight="medium" marginTop="0.5rem">
-              {product.name}
-            </Text>
-            <Text color="gray.600" marginTop="0.5rem">
-              {product.description}
-            </Text>
-            <Text fontWeight="medium" color="teal.500" marginTop="0.5rem">
-              {product.price} Goerli
-            </Text>
-          </Card>
+            <CardProduct product={product} />
           </a>
         ))}
       </Flex>

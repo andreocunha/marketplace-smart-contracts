@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Heading, Image, Text, Button, Container, Flex } from '@chakra-ui/react';
-import { getMetaMaskInfo } from '../../services/metamask';
-import { BigNumber, Contract, providers } from 'ethers'
-import { Product_Contract_ABI } from '../../config/productKeys';
+import { getContractProductFactoryInstance, getContractProductInstance, getMetaMaskAccount, getProductInfoByAddress } from '../../services/metamask';
 import { emitAlert } from '@/utils/alerts';
+import { useRouter } from 'next/router';
 
 export default function Product({ id }: any) {
-  const [contractInstance, setContractInstance] = useState<any>(null);
-  const [buyerAddress, setBuyerAddress] = useState<any>(null);
   const [product, setProduct] = useState<any>(null);
+  const [buyerAddress, setBuyerAddress] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const router = useRouter();
 
   async function sellProduct() {
     setIsLoading(true);
 
-    const provider = new providers.Web3Provider(window?.ethereum, "goerli");
-    const signer = provider.getSigner(buyerAddress);
-    console.log(signer);
-
-    const productInstance = new Contract(id, Product_Contract_ABI, signer);
-    console.log(productInstance);
+    const productInstance = await getContractProductInstance(id)
     await productInstance.functions.buyProduct(buyerAddress, {value: String(product.price)})
      .then((result: any) => {
         console.log(result);
@@ -34,6 +29,7 @@ export default function Product({ id }: any) {
             icon: 'success',
           })
           setIsLoading(false);
+          window.location.reload();
         })
       })
       .catch((error: any) => {
@@ -45,27 +41,45 @@ export default function Product({ id }: any) {
         setIsLoading(false);
       })
   }
+
+  async function deleteProduct() {
+    setIsDeleting(true);
+    const productFactory = await getContractProductFactoryInstance();
+    await productFactory.functions.deleteProduct(id)
+      .then((result: any) => {
+        console.log(result);
+        emitAlert({
+          title: 'Aguarde a confirmação da exclusão...',
+          icon: 'info',
+        })
+        productFactory.on('Deleted', (result: any) => {
+          console.log('Deletado! ',result)
+          emitAlert({
+            title: 'Produto deletado com sucesso!',
+            icon: 'success',
+          })
+          setIsDeleting(false);
+          router.push('/products');
+        })
+      })
+      .catch((error: any) => {
+        console.log('ERRO: ', error);
+        emitAlert({
+          title: 'Exclusão não realizada!',
+          icon: 'error',
+        })
+        setIsDeleting(false);
+      })
+  }
+
     
 
   useEffect(() => {
     async function getProduct() {
-      const result = await getMetaMaskInfo();
-      const contract = result.contract;
-      setContractInstance(contract);
-      setBuyerAddress(result.account);
-      contract.getProduct(id).then((product: any) => {
-        console.log(product);
-        setProduct({
-          name: product[0],
-          description: product[1],
-          price: BigNumber.from(product[2]).toString(),
-          image: product[3],
-          seller_address: product[4],
-          buyer_address: product[5],
-          status: product[6],
-          address: id
-        });
-      })
+      const productLoad = await getProductInfoByAddress(id);
+      setProduct(productLoad);
+      const buyer = await getMetaMaskAccount();
+      setBuyerAddress(buyer);
     }
     getProduct();
   }, [])
@@ -79,17 +93,29 @@ export default function Product({ id }: any) {
   }
 
   return (
-    <Container maxW="container.full" height="100vh" backgroundColor="gray.300">
+    <Container maxW="container.full" height="100%" minHeight="100vh" backgroundColor="gray.300">
       <Flex align="center" justify="center" maxW="container.full" height="100vh">
         <Flex p={8} direction="column" backgroundColor="white" borderRadius="md" boxShadow="md" align="center" justify="center">
           <Heading>{product.name}</Heading>
-          <Image src={product.image} alt={product.name} width="350px" />
+          <Image src={product.imageUrl} alt={product.name} width="350px" />
           <Text>Descrição: {product.description}</Text>
-          <Text>Preço: {product.price}</Text>
+          <Text fontWeight="bold">Preço: {product.price} Goerli</Text>
           <Text>Vendedor: {product.seller_address}</Text>
-          <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading}>
-            Comprar
-          </Button>
+          {product.status && <Text>Comprador: {product.buyer_address}</Text>}
+          <Flex direction="row">
+            {product.status ? 
+              <Text color="red.500" fontWeight="bold">Produto vendido!</Text> : 
+              <Button color="green" m={4} onClick={sellProduct} isLoading={isLoading}>
+                Comprar
+              </Button>
+            }
+            {/* // if (buyerAddress === product.seller_address) allow delete product */}
+            { (buyerAddress === product.seller_address && !product.status) && !product.status && (
+              <Button color="red" m={4} onClick={() => deleteProduct()} isLoading={isDeleting}>
+                Deletar
+              </Button>
+            )}
+          </Flex>
         </Flex>
       </Flex>
     </Container>

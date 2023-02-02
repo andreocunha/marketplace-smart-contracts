@@ -15,13 +15,13 @@ import {
   FormHelperText,
 } from '@chakra-ui/react'
 import { createClient } from '@supabase/supabase-js';
-import { getMetaMaskInfo, isMetaMaskConnected, listenToEvent } from '../services/metamask';
+import { getContractProductFactoryInstance, isMetaMaskConnected } from '../services/metamask';
 import { BigNumber } from 'ethers';
 import { emitAlert } from '@/utils/alerts';
 
 const supabase = createClient(
-  'https://bqcbdsdhihlzxgaswdgy.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxY2Jkc2RoaWhsenhnYXN3ZGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQ3NDI3NDYsImV4cCI6MTk5MDMxODc0Nn0.dGr53CXasqZ3wRtOwTYKIquPp1-A0AQVtO5NTPDBWjE'
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!
 );
 
 
@@ -38,13 +38,14 @@ export default function NewProduct() {
     async function verifyMetaMask() {
       const status = await isMetaMaskConnected();
       if (!status) {
-        router.push('/')
+        router.push('/products')
       }
       else {
-        const result = await getMetaMaskInfo();
-        console.log(result.contract);
-        setContractInstance(result.contract);
-        setSellerAddress(result.account);
+        const contract = await getContractProductFactoryInstance();
+        const address = await contract.signer.getAddress();
+        console.log(contract);
+        setContractInstance(contract);
+        setSellerAddress(address);
       }
     }
     verifyMetaMask();
@@ -91,15 +92,13 @@ export default function NewProduct() {
       formData.get('image') as string,
       sellerAddress
     ).then((result: any) => {
-      console.log(result)
       contractInstance.on('ProductCreated', (result: any) => {
         emitAlert({
           title: 'Produto criado com sucesso',
           icon: 'success',
         })
-        console.log(result)
         setIsLoading(false)
-        router.push('/')
+        router.push('/products')
       })
     }).catch((error: any) => {
       console.log(error)
@@ -123,7 +122,7 @@ export default function NewProduct() {
       justifyContent="center"
     >
       <Head>
-        <title>Criar Produto</title>
+        <title>Cadastrar novo produto</title>
       </Head>
       <Flex
         align="center"
@@ -135,8 +134,7 @@ export default function NewProduct() {
         backgroundColor="#fff"
       >
         <Heading as="h1" size="lg" marginBottom="1rem">
-          Criar Produto
-
+          Cadastrar novo produto
         </Heading>
         <form onSubmit={handleSubmit}>
           <FormControl marginBottom="1rem">

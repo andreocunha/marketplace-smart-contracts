@@ -5,22 +5,33 @@ import {
   Button,
   IconButton,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { PlusSquareIcon } from '@chakra-ui/icons'
 import { loginMetaMask } from '../services/metamask'
+import { ProductProps } from '../interfaces/product'
 
-export function Header() {
+interface HeaderProps {
+  products?: ProductProps[];
+  setFilteredProducts: React.Dispatch<React.SetStateAction<ProductProps[]>>;
+  isLogged?: boolean;
+}
+
+export function Header({ products, setFilteredProducts, isLogged }: HeaderProps) {
   const [search, setSearch] = useState('')
   const router = useRouter()
 
-  const handleSearch = (e: any) => {
-    e.preventDefault()
-    router.push({
-      pathname: '/search',
-      query: { q: search }
-    })
-  }
+  useEffect(() => {
+    if (products) {
+      const filtered = products.filter(product => {
+        return product.name.toLowerCase().includes(search.toLowerCase())
+      })
+      setFilteredProducts(filtered)
+    }
+  }, [search])
+  
+  if(!isLogged) return null;
+
   return (
     <Flex
       as="nav"
@@ -31,13 +42,13 @@ export function Header() {
       bg="teal.500"
       color="white"
     >
-      <Flex align="center" mr={5}>
+      <Flex align="center">
         <Heading as="h1" size="lg" letterSpacing={'-.1rem'}>
           ChainMarket
         </Heading>
       </Flex>
 
-      <Flex align="center" mr={5}>
+      <Flex align="center">
         <Input
           type="search"
           placeholder="Pesquisar produtos"
@@ -48,30 +59,23 @@ export function Header() {
             color: "black"
           }}
         />
-        <Button
-          type="submit"
-          onClick={handleSearch}
-          marginLeft="1rem"
-          backgroundColor="teal.800"
-        >
-          Procurar
-        </Button>
       </Flex>
 
       <Flex align="center">
-        <IconButton
-          aria-label="Carrinho de compras"
-          icon={<PlusSquareIcon />}
-          color="white"
+        <Button
           variant="outline"
           onClick={() => router.push('/newProduct')}
           marginRight="1rem"
-        />
+          gap={2}
+        >
+          Cadastrar produto 
+          <PlusSquareIcon height="1.2rem" width="1.2rem" />
+        </Button>
         <Button
           variant="outline"
-          onClick={() => loginMetaMask()}
+          onClick={() => router.push('/profile')}
         >
-          Entrar
+          Perfil
         </Button>
       </Flex>
     </Flex>
