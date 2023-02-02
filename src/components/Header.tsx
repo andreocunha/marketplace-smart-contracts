@@ -43,7 +43,7 @@ export function Header({ products, setFilteredProducts, isLogged }: HeaderProps)
       color="white"
     >
       <Flex align="center">
-        <Heading as="h1" size="lg" letterSpacing={'-.1rem'}>
+        <Heading as="h1" size="lg" letterSpacing={'-.1rem'} cursor="pointer" onClick={() => router.push('/')}>
           ChainMarket
         </Heading>
       </Flex>
