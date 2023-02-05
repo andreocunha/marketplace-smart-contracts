@@ -13,6 +13,7 @@ import {
   FormLabel,
   Image,
   FormHelperText,
+  Text
 } from '@chakra-ui/react'
 import { createClient } from '@supabase/supabase-js';
 import { getContractProductFactoryInstance, isMetaMaskConnected } from '../services/metamask';
@@ -28,6 +29,7 @@ const supabase = createClient(
 export default function NewProduct() {
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState('')
+  const [price, setPrice] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(false)
   const [contractInstance, setContractInstance] = useState<any>(null);
   const [sellerAddress, setSellerAddress] = useState<any>(null);
@@ -151,12 +153,18 @@ export default function NewProduct() {
             />
           </FormControl>
           <FormControl marginBottom="1rem">
-            <FormLabel>Preço</FormLabel>
+            <FormLabel>Preço
+            {/* show description to equivalente price => {price} Wei = {Number(price) / 10**18} GöETH */}
+            { price > 0 && <Text as="span" marginLeft="0.5rem" fontSize="sm">({Number(price) / 10**18} GöETH)</Text> }  
+            </FormLabel>
+            
+            
             <Input
               type="number"
               placeholder="Preço do produto"
               min="0"
               required
+              onChange={e => setPrice(Number(e.target.value))}
             />
           </FormControl>
           <FormControl marginBottom="1rem">

@@ -23,14 +23,17 @@ contract Product {
     
     // Evento para indicar o pagamento
     event Paid();
-    
-    // Função para comprar o produto
-    function buyProduct(address _buyer) payable external {
+
+    modifier buyVerification() {
         // Verifica se o produto já foi vendido
         require(!sold, "Produto ja vendido");
         // Verifica se o valor enviado é suficiente para comprar o produto
         require(msg.value >= price, "Valor insuficiente");
-        
+        _;
+    }
+    
+    // Função para comprar o produto
+    function buyProduct(address _buyer) payable external buyVerification {
         // Atribui o comprador
         buyer = _buyer;
         sold = true;
@@ -77,12 +80,15 @@ contract ProductFactory {
         return (product.name(), product.description(), product.price(), product.imageUrl(), product.seller(), product.buyer(), product.sold());
     }
 
-    // Função para deletar um contrato de produto específico
-    function deleteProduct(address _productAddress) public {
+    modifier deleteVerification(address _productAddress) {
         // Verifica se o endereço do vendedor corresponde ao remetente da transação
         Product product = Product(_productAddress);
         require(address(msg.sender) == product.seller(), "Apenas o vendedor pode deletar o produto");
+        _;
+    }
 
+    // Função para deletar um contrato de produto específico
+    function deleteProduct(address _productAddress) public deleteVerification(_productAddress) {
         // Remove o produto do array de produtos
         uint256 productIndex;
         for (uint256 i = 0; i < products.length; i++) {

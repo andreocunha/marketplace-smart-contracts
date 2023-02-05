@@ -1,24 +1,5 @@
-export const Product_Contract_Address = "0x1A11f27e6721FbcFD7b865B34b81069aFCf08610"
+export const Product_Contract_Address = "0x80838C20F8d5c403eA7e67364A502ef030FC443B"
 export const Product_Contract_ABI = [
-	{
-		"anonymous": false,
-		"inputs": [],
-		"name": "Paid",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_buyer",
-				"type": "address"
-			}
-		],
-		"name": "buyProduct",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
 	{
 		"inputs": [
 			{
@@ -49,6 +30,25 @@ export const Product_Contract_ABI = [
 		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "Paid",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
+			}
+		],
+		"name": "buyProduct",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
